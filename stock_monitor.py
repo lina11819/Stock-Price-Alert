@@ -189,15 +189,6 @@ def fetch_stock_data():
                 font-weight: bold;
                 width: 30%;
             }}
-            
-            /* 图片说明 */
-            .image-caption {{
-                font-size: 16px;
-                color: #666;
-                text-align: center;
-                margin-top: 8px;
-                margin-bottom: 15px;
-            }}
         </style>
     </head>
     <body>
@@ -382,7 +373,6 @@ def fetch_stock_data():
                             <a href="data:image/png;base64,{img_base64}" target="_blank">
                                 <img src="data:image/png;base64,{img_base64}" alt="{title} Chart" style="max-width:100%; height:auto; border:1px solid #ddd; border-radius:4px;">
                             </a>
-                            <div class="image-caption">👆 点击图片可查看大图</div>
                         </div>
                         
                         <!-- 数据部分（下方） -->
