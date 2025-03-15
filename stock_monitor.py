@@ -69,134 +69,142 @@ def fetch_stock_data():
 
     # 创建HTML报告的头部，包含CSS样式
     report_html = f"""
+    <!DOCTYPE html>
     <html>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>每日股票市场报告</title>
         <style>
-            body {{ font-family: Arial, sans-serif; font-size: 18px; }}
-            table {{ width: 100%; border-collapse: collapse; }}
-            th, td {{ padding: 14px; text-align: center; border-bottom: 1px solid #ddd; font-size: 22px; }}
-            th {{ background-color: #f4f4f4; font-size: 24px; font-weight: bold; }}
-            .positive {{ color: red; font-weight: bold; }}  /* 正涨幅显示为红色（中国市场习惯） */
-            .negative {{ color: green; font-weight: bold; }}  /* 负涨幅显示为绿色 */
-            .highlight {{ font-size: 28px; font-weight: bold; }} /* 强调 1 天涨幅 */
-            .index-container {{ 
-                display: flex; 
-                align-items: flex-start; 
-                margin: 20px 0; 
+            /* 基础样式 */
+            body {{
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.5;
+                color: #333;
+                margin: 0;
+                padding: 10px;
+                background-color: #f9f9f9;
+            }}
+            h2, h3, h4 {{
+                color: #2c3e50;
+                margin-top: 20px;
+                margin-bottom: 15px;
+            }}
+            h2 {{
+                font-size: 24px;
+                text-align: center;
+            }}
+            h3 {{
+                font-size: 20px;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 10px;
+            }}
+            h4 {{
+                font-size: 18px;
+                margin-bottom: 10px;
+                text-align: center;
+            }}
+            
+            /* 表格样式 */
+            .summary-table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                font-size: 14px;
+                background-color: white;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border-radius: 5px;
+            }}
+            .summary-table th, .summary-table td {{
+                padding: 8px;
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+            }}
+            .summary-table th {{
+                background-color: #f4f4f4;
+                font-weight: bold;
+            }}
+            
+            /* 涨跌颜色 */
+            .positive {{
+                color: red;
+                font-weight: bold;
+            }}
+            .negative {{
+                color: green;
+                font-weight: bold;
+            }}
+            .highlight {{
+                font-size: 110%;
+            }}
+            
+            /* 股票容器 */
+            .stock-container {{
+                margin-bottom: 25px;
                 border: 1px solid #eee;
-                border-radius: 10px;
-                padding: 20px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                padding: 15px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                background-color: #fff;
             }}
-            .index-image {{ 
-                flex: 1; 
-                text-align: center; 
-                margin-right: 20px;
+            
+            /* 图片样式 */
+            .stock-image {{
+                text-align: center;
+                margin-bottom: 15px;
             }}
-            .index-data {{ 
-                flex: 1; 
-                padding-left: 20px; 
-                font-size: 22px; 
+            .stock-image img {{
+                max-width: 100%;
+                height: auto;
+                border: 1px solid #ddd;
+                border-radius: 4px;
             }}
+            
+            /* 数据表格 */
             .data-table {{
                 width: 100%;
                 border-collapse: collapse;
+                font-size: 14px;
+                margin-top: 15px;
+                background-color: #f9f9f9;
+                border-radius: 4px;
             }}
             .data-table td {{
                 padding: 8px;
-                text-align: left;
-                font-size: 20px;
                 border-bottom: 1px solid #eee;
+            }}
+            .data-table tr:last-child td {{
+                border-bottom: none;
             }}
             .data-table td:first-child {{
                 font-weight: bold;
-                width: 40%;
+                width: 30%;
             }}
-            img {{ 
-                width: 90%; 
-                max-width: 600px; 
-                border: 1px solid #ccc; 
-                border-radius: 5px;
-                transition: transform 0.3s ease;
-                cursor: pointer;
-            }}
-            /* 弹出层样式 */
-            .modal {{
-                display: none;
-                position: fixed;
-                z-index: 1000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.9);
-                overflow: auto;
-            }}
-            .modal-content {{
-                margin: auto;
-                display: block;
-                max-width: 90%;
-                max-height: 90%;
-            }}
-            .close {{
-                position: absolute;
-                top: 15px;
-                right: 35px;
-                color: #f1f1f1;
-                font-size: 40px;
-                font-weight: bold;
-                transition: 0.3s;
-                cursor: pointer;
-            }}
-            .close:hover,
-            .close:focus {{
-                color: #bbb;
-                text-decoration: none;
+            
+            /* 图片说明 */
+            .image-caption {{
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+                margin-top: 5px;
+                margin-bottom: 15px;
             }}
         </style>
-        <script>
-            // 图片点击放大功能
-            function showModal(imgSrc) {{
-                var modal = document.getElementById('imageModal');
-                var modalImg = document.getElementById('modalImage');
-                modal.style.display = "block";
-                modalImg.src = imgSrc;
-            }}
-            
-            function closeModal() {{
-                document.getElementById('imageModal').style.display = "none";
-            }}
-            
-            // 当页面加载完成后，为所有图片添加点击事件
-            document.addEventListener('DOMContentLoaded', function() {{
-                var images = document.querySelectorAll('.stock-chart');
-                images.forEach(function(img) {{
-                    img.onclick = function() {{
-                        showModal(this.src);
-                    }};
-                }});
-                
-                // 点击模态框外部关闭
-                var modal = document.getElementById('imageModal');
-                modal.onclick = function(event) {{
-                    if (event.target === modal) {{
-                        closeModal();
-                    }}
-                }};
-            }});
-        </script>
     </head>
     <body>
         <h2>📊 每日股票市场报告 - {today}</h2>
-        <table>
+        
+        <!-- 汇总表格 -->
+        <table class="summary-table">
             <tr>
                 <th>名称</th>
                 <th>收盘价</th>
                 <th>目标价</th>
                 <th><b>1天涨跌</b></th>
                 <th>1周涨跌</th>
-                <th>1个月涨跌</th>
-                <th>3个月涨跌</th>
+                <th>1个月</th>
+                <th>3个月</th>
             </tr>
     """
 
@@ -285,13 +293,8 @@ def fetch_stock_data():
     # 添加市场趋势图部分
     report_html += """
         </table>
-        <h3>📈 市场趋势图</h3>
         
-        <!-- 图片放大的模态框 -->
-        <div id="imageModal" class="modal">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <img class="modal-content" id="modalImage">
-        </div>
+        <h3>📈 市场趋势图</h3>
     """
 
     # 设置请求头，模拟浏览器访问
@@ -360,35 +363,41 @@ def fetch_stock_data():
                 if response.status_code == 200:
                     # 将图片转换为Base64编码，以便嵌入HTML
                     img_base64 = base64.b64encode(response.content).decode("utf-8")
-                    # 添加图表和股票详细信息到HTML，使用两列表格布局
+                    
+                    # 添加图表和股票详细信息到HTML，使用垂直布局（图片在上，数据在下）
                     report_html += f"""
-                    <div class="index-container">
-                        <div class="index-image">
-                            <h4>{title} ({stockcharts_ticker})</h4>
-                            <img src="data:image/png;base64,{img_base64}" alt="{title} Chart" class="stock-chart" onclick="showModal(this.src)">
+                    <div class="stock-container">
+                        <h4>{title} ({stockcharts_ticker})</h4>
+                        
+                        <!-- 图片部分（上方） -->
+                        <div class="stock-image">
+                            <a href="data:image/png;base64,{img_base64}" target="_blank">
+                                <img src="data:image/png;base64,{img_base64}" alt="{title} Chart" style="max-width:100%; height:auto; border:1px solid #ddd; border-radius:4px;">
+                            </a>
+                            <div class="image-caption">点击图片可查看大图</div>
                         </div>
-                        <div class="index-data">
-                            <table class="data-table">
-                                <tr>
-                                    <td>收盘价</td>
-                                    <td>{latest_close_str}</td>
-                                    <td>目标价</td>
-                                    <td>{target_price_str}</td>
-                                </tr>
-                                <tr>
-                                    <td>1天涨跌</td>
-                                    <td><span class="{color_class(one_day_change)} highlight">{one_day_change:.2f}%</span></td>
-                                    <td>1周涨跌</td>
-                                    <td><span class="{color_class(one_week_change)}">{one_week_change:.2f}%</span></td>
-                                </tr>
-                                <tr>
-                                    <td>1个月涨跌</td>
-                                    <td><span class="{color_class(one_month_change)}">{one_month_change:.2f}%</span></td>
-                                    <td>3个月涨跌</td>
-                                    <td><span class="{color_class(three_month_change)}">{three_month_change:.2f}%</span></td>
-                                </tr>
-                            </table>
-                        </div>
+                        
+                        <!-- 数据部分（下方） -->
+                        <table class="data-table" cellspacing="0" cellpadding="0" border="0" style="width:100%;">
+                            <tr>
+                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold; width:30%;">收盘价</td>
+                                <td style="padding:8px; border-bottom:1px solid #eee;">{latest_close_str}</td>
+                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold; width:30%;">目标价</td>
+                                <td style="padding:8px; border-bottom:1px solid #eee;">{target_price_str}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">1天涨跌</td>
+                                <td style="padding:8px; border-bottom:1px solid #eee;" class="{color_class(one_day_change)} highlight">{one_day_change:.2f}%</td>
+                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">1周涨跌</td>
+                                <td style="padding:8px; border-bottom:1px solid #eee;" class="{color_class(one_week_change)}">{one_week_change:.2f}%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">1个月涨跌</td>
+                                <td style="padding:8px;" class="{color_class(one_month_change)}">{one_month_change:.2f}%</td>
+                                <td style="padding:8px; font-weight:bold;">3个月涨跌</td>
+                                <td style="padding:8px;" class="{color_class(three_month_change)}">{three_month_change:.2f}%</td>
+                            </tr>
+                        </table>
                     </div>
                     """
                     print(f"✅ 图片嵌入成功: {stockcharts_ticker}")
@@ -399,6 +408,9 @@ def fetch_stock_data():
 
     # 完成HTML报告
     report_html += """
+        <div style="margin-top:30px; font-size:12px; color:#666; text-align:center; border-top:1px solid #eee; padding-top:10px;">
+            此报告由自动系统生成，数据来源于Yahoo Finance和StockCharts
+        </div>
     </body>
     </html>
     """
