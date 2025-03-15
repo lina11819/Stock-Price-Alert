@@ -79,8 +79,8 @@ def fetch_stock_data():
             /* 基础样式 */
             body {{
                 font-family: Arial, sans-serif;
-                font-size: 16px;
-                line-height: 1.5;
+                font-size: 18px;
+                line-height: 1.6;
                 color: #333;
                 margin: 0;
                 padding: 10px;
@@ -92,38 +92,46 @@ def fetch_stock_data():
                 margin-bottom: 15px;
             }}
             h2 {{
-                font-size: 24px;
+                font-size: 28px;
                 text-align: center;
+                padding: 15px 0;
+                background-color: #f4f4f4;
+                border-radius: 8px;
+                margin-bottom: 20px;
             }}
             h3 {{
-                font-size: 20px;
+                font-size: 24px;
                 border-bottom: 1px solid #eee;
                 padding-bottom: 10px;
             }}
             h4 {{
-                font-size: 18px;
-                margin-bottom: 10px;
+                font-size: 22px;
+                margin-bottom: 15px;
                 text-align: center;
+                background-color: #eef5ff;
+                padding: 10px;
+                border-radius: 6px;
             }}
             
             /* 表格样式 */
             .summary-table {{
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 20px;
-                font-size: 14px;
+                margin-bottom: 25px;
+                font-size: 16px;
                 background-color: white;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
                 border-radius: 5px;
             }}
             .summary-table th, .summary-table td {{
-                padding: 8px;
+                padding: 12px 8px;
                 text-align: center;
                 border-bottom: 1px solid #ddd;
             }}
             .summary-table th {{
                 background-color: #f4f4f4;
                 font-weight: bold;
+                font-size: 18px;
             }}
             
             /* 涨跌颜色 */
@@ -136,23 +144,23 @@ def fetch_stock_data():
                 font-weight: bold;
             }}
             .highlight {{
-                font-size: 110%;
+                font-size: 120%;
             }}
             
             /* 股票容器 */
             .stock-container {{
-                margin-bottom: 25px;
-                border: 1px solid #eee;
+                margin-bottom: 30px;
+                border: 1px solid #ddd;
                 border-radius: 8px;
                 padding: 15px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 background-color: #fff;
             }}
             
             /* 图片样式 */
             .stock-image {{
                 text-align: center;
-                margin-bottom: 15px;
+                margin-bottom: 20px;
             }}
             .stock-image img {{
                 max-width: 100%;
@@ -165,14 +173,14 @@ def fetch_stock_data():
             .data-table {{
                 width: 100%;
                 border-collapse: collapse;
-                font-size: 14px;
+                font-size: 18px;
                 margin-top: 15px;
                 background-color: #f9f9f9;
                 border-radius: 4px;
             }}
             .data-table td {{
-                padding: 8px;
-                border-bottom: 1px solid #eee;
+                padding: 10px 8px;
+                border-bottom: 1px solid #ddd;
             }}
             .data-table tr:last-child td {{
                 border-bottom: none;
@@ -184,10 +192,10 @@ def fetch_stock_data():
             
             /* 图片说明 */
             .image-caption {{
-                font-size: 12px;
+                font-size: 16px;
                 color: #666;
                 text-align: center;
-                margin-top: 5px;
+                margin-top: 8px;
                 margin-bottom: 15px;
             }}
         </style>
@@ -374,28 +382,28 @@ def fetch_stock_data():
                             <a href="data:image/png;base64,{img_base64}" target="_blank">
                                 <img src="data:image/png;base64,{img_base64}" alt="{title} Chart" style="max-width:100%; height:auto; border:1px solid #ddd; border-radius:4px;">
                             </a>
-                            <div class="image-caption">点击图片可查看大图</div>
+                            <div class="image-caption">👆 点击图片可查看大图</div>
                         </div>
                         
                         <!-- 数据部分（下方） -->
                         <table class="data-table" cellspacing="0" cellpadding="0" border="0" style="width:100%;">
                             <tr>
-                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold; width:30%;">收盘价</td>
-                                <td style="padding:8px; border-bottom:1px solid #eee;">{latest_close_str}</td>
-                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold; width:30%;">目标价</td>
-                                <td style="padding:8px; border-bottom:1px solid #eee;">{target_price_str}</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-weight:bold; width:30%; font-size:18px;">收盘价</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-size:18px;">{latest_close_str}</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-weight:bold; width:30%; font-size:18px;">目标价</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-size:18px;">{target_price_str}</td>
                             </tr>
                             <tr>
-                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">1天涨跌</td>
-                                <td style="padding:8px; border-bottom:1px solid #eee;" class="{color_class(one_day_change)} highlight">{one_day_change:.2f}%</td>
-                                <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold;">1周涨跌</td>
-                                <td style="padding:8px; border-bottom:1px solid #eee;" class="{color_class(one_week_change)}">{one_week_change:.2f}%</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-weight:bold; font-size:18px;">1天涨跌</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-size:18px;" class="{color_class(one_day_change)} highlight">{one_day_change:.2f}%</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-weight:bold; font-size:18px;">1周涨跌</td>
+                                <td style="padding:12px 8px; border-bottom:1px solid #ddd; font-size:18px;" class="{color_class(one_week_change)}">{one_week_change:.2f}%</td>
                             </tr>
                             <tr>
-                                <td style="padding:8px; font-weight:bold;">1个月涨跌</td>
-                                <td style="padding:8px;" class="{color_class(one_month_change)}">{one_month_change:.2f}%</td>
-                                <td style="padding:8px; font-weight:bold;">3个月涨跌</td>
-                                <td style="padding:8px;" class="{color_class(three_month_change)}">{three_month_change:.2f}%</td>
+                                <td style="padding:12px 8px; font-weight:bold; font-size:18px;">1个月涨跌</td>
+                                <td style="padding:12px 8px; font-size:18px;" class="{color_class(one_month_change)}">{one_month_change:.2f}%</td>
+                                <td style="padding:12px 8px; font-weight:bold; font-size:18px;">3个月涨跌</td>
+                                <td style="padding:12px 8px; font-size:18px;" class="{color_class(three_month_change)}">{three_month_change:.2f}%</td>
                             </tr>
                         </table>
                     </div>
@@ -408,7 +416,7 @@ def fetch_stock_data():
 
     # 完成HTML报告
     report_html += """
-        <div style="margin-top:30px; font-size:12px; color:#666; text-align:center; border-top:1px solid #eee; padding-top:10px;">
+        <div style="margin-top:30px; font-size:14px; color:#666; text-align:center; border-top:1px solid #eee; padding-top:10px;">
             此报告由自动系统生成，数据来源于Yahoo Finance和StockCharts
         </div>
     </body>
