@@ -194,8 +194,58 @@ def fetch_stock_data():
 
     # 遍历股票列表，获取每只股票的走势图
     for index, row in stock_list.iterrows():
+        ticker = row['Ticker']           # Yahoo Finance股票代码
         stockcharts_ticker = row['StockCharts Ticker']
         title = row['Title']
+
+        # 处理目标价格为空的情况
+        target_price = row['Target Price']
+        try:
+            target_price = float(target_price) if target_price not in ["N/A", ""] else None
+        except ValueError:
+            target_price = None
+
+        # 使用yfinance获取股票信息
+        stock = yf.Ticker(ticker)
+        stock_info = stock.info
+        currency = stock_info.get("currency", "N/A")  # 获取货币单位
+
+        # 获取最新收盘价
+        latest_close = stock_info.get("regularMarketPrice", 0)
+        latest_close_str = f"{latest_close:.2f} {currency}"
+
+        # 直接从Yahoo Finance获取1天涨跌幅
+        one_day_change = stock_info.get("regularMarketChangePercent", 0)
+
+        # 定义计算涨跌幅的辅助函数
+        def calculate_change(hist):
+            """
+            计算历史数据的涨跌幅
+            
+            参数:
+                hist (DataFrame): 包含历史价格数据的DataFrame
+            
+            返回:
+                float: 涨跌幅百分比
+            """
+            if not hist.empty:
+                first_valid_date = hist.first_valid_index()
+                if first_valid_date is not None:
+                    first_close = hist.loc[first_valid_date, "Close"]
+                    return ((latest_close - first_close) / first_close) * 100
+            return 0
+
+        # 获取不同时间段的历史数据
+        hist_7d = stock.history(period="7d").asfreq('B')    # 1周数据，只保留工作日
+        hist_1mo = stock.history(period="1mo").asfreq('B')  # 1个月数据
+        hist_3mo = stock.history(period="3mo").asfreq('B')  # 3个月数据
+
+        # 计算各时间段的涨跌幅
+        one_week_change = calculate_change(hist_7d)
+        one_month_change = calculate_change(hist_1mo)
+        three_month_change = calculate_change(hist_3mo)
+
+        target_price_str = f"{target_price:.2f}" if target_price is not None else "N/A"
         
         # 只处理有StockCharts代码的股票
         if stockcharts_ticker and stockcharts_ticker != "N/A":
