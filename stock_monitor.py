@@ -244,7 +244,7 @@ def fetch_stock_data():
             return "positive" if value > 0 else "negative"
         
         # 只处理有StockCharts代码且不包含"N/A"子字符串的股票
-        if stockcharts_ticker and "N/A" not in stockcharts_ticker:
+        if stockcharts_ticker and "N/A" not in stockcharts_ticker and "NAN" not in stockcharts_ticker and "nan" not in stockcharts_ticker:
             # 构建StockCharts图表URL
             chart_url = f"https://stockcharts.com/c-sc/sc?s={stockcharts_ticker}&p=D&b=40&g=0&i=0"
             try:
